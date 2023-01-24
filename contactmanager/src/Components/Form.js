@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const Form = ({ userInput, setWord, onFormChange, onFormSubmit, listOfContacts }) => {
+export const Form = ({ userInput, onFormChange, onFormSubmit, data }) => {
 
     const handleChange = (event) => {
         onFormChange(event.target.value);
@@ -8,16 +8,14 @@ export const Form = ({ userInput, setWord, onFormChange, onFormSubmit, listOfCon
 
     const handleSubmit = (event) => {
         event.preventDefault()
-        setWord(userInput)//probably doesnt influence anything since the form passes
-        //two addContacts and not word1
         let flag = false
-        listOfContacts.map(contact => {
-            if (contact.word == userInput) {
+        data.map(contact => {
+            if (contact.word === userInput) {
                 //console.log("found a double");
                 flag = true
             }
         })
-        if(flag == false) {
+        if(flag === false) {
             onFormSubmit()
         }
         

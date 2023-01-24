@@ -35,7 +35,7 @@ class ContactModel(db.Model):
  
     def __init__(self, name, word):
         
-        self.name = give_definition(name)
+        self.name = give_definition(name) #give_definition finds wiktionary definition
         self.word = word
         
 
@@ -64,19 +64,40 @@ def create():
         return jsonify({"success": True, "message": "this is the create endpoint"}), 201
  
     if request.method == 'POST':
-        #try
+        try:
+            request_data = json.loads(request.data)
+            name = request_data['name']
+            word = request_data['word']
+            contact = ContactModel(name=name, word=word)
+            db.session.add(contact)
+            db.session.commit()
+            return jsonify({"success": True, "message": "contact added successfully"}), 201 
+        except: 
+            return jsonify({"success": True, "message": "already in database"}), 201 
+
+#uploadfile in development
+@app.route('/api/uploadfile' , methods = ['GET','POST'])
+def receivefile():
+    if request.method == 'GET':
+        return jsonify({"success": True, "message": "this is the create endpoint"}), 201
+ 
+    if request.method == 'POST':
+        #try - uncomment to silence 500 errors 
         request_data = json.loads(request.data)
         name = request_data['name']
-        word = request_data['word']
-        contact = ContactModel(name=name, word=word)
-        db.session.add(contact)
-        db.session.commit()
-        return jsonify({"success": True, "message": "contact added successfully"}), 201 
+        state = request_data['state']['selectedFile']
+        #state = request_data['state']['value']
+        file = open('newfilefrompython2.pdf', 'w+')
+        file.write(str(state))
+        file.close()
+        #word = request_data['word']
+        #contact = ContactModel(name=name, word=word)
+        #db.session.add(contact)
+        #db.session.commit()
+        return jsonify({"success": True, "message": "file received", "state":state }), 201 
         #except: 
         #    return jsonify({"success": True, "message": "already in database"}), 201 
-        
 
-        
 
 def contact_serializer(contact):
     return {'name': contact.name, 'word': contact.word}

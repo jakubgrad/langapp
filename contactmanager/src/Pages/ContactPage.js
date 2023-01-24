@@ -1,25 +1,23 @@
 import React, {useState, useEffect, useMemo} from 'react';
 import {Card} from '../Components/Card';
 import {Form} from '../Components/Form';
-import {Word} from '../Components/Word';
 import {Wordlist} from '../Components/Wordlist';
 import {Last} from '../Components/Last';
 import {Selector} from '../Components/Selector';
 import {Counter} from '../Components/Counter';
-//import {Loader} from '../Components/Loader';
+
 
 export const ContactPage = () => {
-    const [data, setData]=useState([])
+    
     const [count, setCount] = useState(0)
-    const [contact, setContact] = useState([])
-    const [addContact, setAddContact] = useState('')
-    const [word1, setWord] = useState('something')
-    const [selected, setSelected] = useState('neuvola')
-    const wordlist = ["ennen","maanantai", "neuvola", "vatsa", "leuka", "matka"]
-    const [ wordlist2, setWordlist2 ] = useState([["vatsa","tauti","hiihto","ennen","matka","tunti"],["huomenna","eilen","neuvoa","hiihtaa"]])
+    const [data, setData] = useState([])
+    const [searchPhrase, setSearchPhrase] = useState('')
+    const [ wordlist, setWordlist ] = useState([["menemme","vatsa","tauti","hiihto","ennen","matka","tunti"],["huomenna","eilen","neuvoa","hiihtaa"]])
+    //the wordlist is used as default data, for when data from a file wasn't uploaded yet.
+    //wordlist is updated with data from python server when getData succeeds
 
         const getData=()=>{
-            console.log("LOADING");
+            console.log("Loading data with getData");
             fetch('data.json'
             ,{
               headers : { 
@@ -34,53 +32,46 @@ export const ContactPage = () => {
               })
               .then(function(myJson) {
                 console.log(myJson);
-                setData(myJson)
-                setWordlist2(myJson)
-                setCount(0)
-                Loader2(wordlist2[0])
+                setWordlist(myJson) //update default wordlist with that from database
+                setCount(0) //count defines which line from wordlist is displayed at the moment
+                Loader(wordlist[0]) //Loader calls app.py which updates 
               });   
           }
 
-    useEffect(()=> {
+    useEffect(()=> {        //fetches definitions of words
         fetch('/data').then(response => {
             if (response.ok){
                 console.log(response)
                 return response.json()
                 
             }
-        }).then(data => setContact(data))
+        }).then(data => setData(data))
     }, [])
     
 
     const handleFormChange = (inputValue) => {
-        setAddContact(inputValue)
-    }
-
-    const handleFormChange2 = ( word ) => {
-        //console.log("PROP: " + word);
-        setAddContact(word)
+        setSearchPhrase(inputValue)
     }
 
     const handleFormSubmit = () => {
-        console.log("addContact in handleFormSubmit: " + addContact);
+        console.log("searchPhrase in handleFormSubmit: " + searchPhrase);
         fetch('/data/create', {
             method: 'POST',
             body: JSON.stringify({
-                word:addContact,
-                name:addContact
+                word:searchPhrase
             }),
             headers: {
                 "Content-type": "application/json; charset=UTF-8"
             }
         }).then(response => response.json()).then(message => 
             {console.log(message);
-            getLatestContacts();
-            setAddContact('')
+            getLatestData();
+            setSearchPhrase('')
             })
         
     }
 
-    const deleteContact = (name) => {
+    const deleteWord = (name) => {
         fetch('/data/delete', {
             method: 'POST',
             body: JSON.stringify({
@@ -91,58 +82,35 @@ export const ContactPage = () => {
             }
         }).then(response => response.json()).then(message => {
             console.log(message);
-            getLatestContacts()
+            getLatestData()
             })
         
     }
 
-    const getLatestContacts = () => {
+    const getLatestData = () => {
         fetch('/data').then(response => {
             if(response.ok){
                 return response.json()
             }
-        }).then(data => setContact(data))
+        }).then(data => setData(data))
     }
 
-    const Loader = () => {
-        wordlist.map(word => {
+    const Loader = (wl) => {        //wl stands for wordlist
+        console.log("Loader called with the wordlist" + wl);
+       wl.map(word => {             //loader takes each words and sends it to python scripts to find translation
                 console.log("loading "+word);
                     fetch('/data/create', {
                         method: 'POST',
                         body: JSON.stringify({
-                            word:word,
-                            name:word
+                            word:word
                         }),
                         headers: {
                             "Content-type": "application/json; charset=UTF-8"
                         }
                     }).then(response => response.json()).then(message => 
                         {console.log(message);
-                            getLatestContacts();
-                            setAddContact('')
-                        })
-                    
-                }
-        )
-    }
-
-    const Loader2 = (wl) => {
-        console.log("LOADER2 CALLED with " + wl);
-       wl.map(word => {
-                console.log("loading "+word);
-                    fetch('/data/create', {
-                        method: 'POST',
-                        body: JSON.stringify({
-                            word:word,
-                            name:word
-                        }),
-                        headers: {
-                            "Content-type": "application/json; charset=UTF-8"
-                        }
-                    }).then(response => response.json()).then(message => 
-                        {console.log(message);
-                            getLatestContacts();
-                            setAddContact('')
+                            getLatestData();
+                            setSearchPhrase('')
                         })
                     
                 })
@@ -150,27 +118,28 @@ export const ContactPage = () => {
             
     }
     
-    const cachedValue = useMemo(() => Loader2(wordlist2[count]), [])
+    const cachedValue = useMemo(() => Loader(wordlist[count]), [])
     //const cachedData = useMemo(() => getData())
     
     return (
         <>
         {cachedValue}
        
-        {/*<Loader wordlist={wordlist} onFormSubmit={handleFormSubmit} listOfContacts={contact}/>*/}
-        <Wordlist wordlist={wordlist2[count]} onFormChange = {handleFormChange} onFormSubmit={handleFormSubmit} listOfContacts={contact}/>
-        {/*<Word value="kuppi" onFormChange = {handleFormChange} onFormSubmit={handleFormSubmit} listOfContacts={contact}/>
-        <Word value="muki" onFormChange = {handleFormChange} onFormSubmit={handleFormSubmit} listOfContacts={contact}/>
-        <Word value="ajatus" onFormChange = {handleFormChange} onFormSubmit={handleFormSubmit} listOfContacts={contact}/>
-    <Word value="sairaus" onFormChange = {handleFormChange} onFormSubmit={handleFormSubmit} listOfContacts={contact}/>*/}
+        <div style={{"textAlign":"center"}}>
+            <Wordlist wordlist={wordlist[count]} onFormChange = {handleFormChange} onFormSubmit={handleFormSubmit} data={data}/>
+        </div>
+        
         <br></br>
-        <Counter count={count} setCount={setCount} Loader2={Loader2} wordlist2={wordlist2}/>
-        <button onClick={getData}>Get Data</button>
-        <Selector listOfContacts={contact} selected={addContact} onDelete={deleteContact}/>    
-        <Form userInput={addContact} setWord={setWord} onFormChange = {handleFormChange} onFormSubmit={handleFormSubmit} listOfContacts={contact}/>
+        <div style={{"textAlign":"center"}}>
+        <button style={{padding:3, margin:2}} onClick={getData}>Get Data</button>
+            <Counter count={count} setCount={setCount} Loader={Loader} wordlist={wordlist}/>
+            <Form userInput={searchPhrase} onFormChange = {handleFormChange} onFormSubmit={handleFormSubmit} data={data}/>
+        </div>
+        <br></br>
         <div className="App2">
-        <Last listOfContacts={contact} onDelete={deleteContact}/>
-        <Card listOfContacts={contact} onDelete={deleteContact}/>
+        <Selector data={data} selected={searchPhrase} onDelete={deleteWord}/>    
+        {/*<Last data={data} onDelete={deleteWord}/> last word. For now unnecessary*/}
+        {/*<Card data={data} onDelete={deleteWord}/>  those are past words, useful for development */}
         </div>
         </>
     )

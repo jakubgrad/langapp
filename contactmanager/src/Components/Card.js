@@ -1,7 +1,7 @@
 import React from 'react';
 import {Item} from '../Components/Item';
 
-export const Card = ({ listOfContacts, onDelete }) => {
+export const Card = ({ data, onDelete }) => {
     
     const handleDelete = (name) => {
         onDelete(name);
@@ -10,11 +10,12 @@ export const Card = ({ listOfContacts, onDelete }) => {
     return(
         <>
         <table><tbody>
-        {listOfContacts.map(contact => {
+        {data.map(contact => {
             return(
                 <tr key={contact.name}>
                     <th>
-                    <button onClick={() => handleDelete(contact.name)}> x </button></th>
+                    {/*<button onClick={() => handleDelete(contact.name)}> x </button> deleting words*/}
+                    </th>
                     <th>searched word:{contact.word}<Item value={contact.name} /></th>
                 </tr>
             )
