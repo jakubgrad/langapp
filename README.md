@@ -6,4 +6,7 @@ In order to work, the app requires standard react libraries and python v3. The R
 If all necessary libraries are present, simply download the repository and run npm start in the conctamanager folder. If that doesn't work, delete node_modules folder and run npm i, then try running npm start again. 
 
 
+
 <img src="https://github.com/jakubgrad/langapp/blob/main/Screenshots/menemme.png" alt="Alt text" title="Optional title">
+
+<img src="https://github.com/jakubgrad/langapp/blob/main/Screenshots/mutta.png" alt="Alt text" title="Optional title">
