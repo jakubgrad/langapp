@@ -7,6 +7,8 @@ If all necessary libraries are present, simply download the repository and run n
 
 
 <br><br>
+Hovering over the word "menemme"
 <img src="https://github.com/jakubgrad/langapp/blob/main/Screenshots/menemme.png" alt="Alt text" title="Optional title">
 <br><br>
+Hovering over the word "mutta"
 <img src="https://github.com/jakubgrad/langapp/blob/main/Screenshots/mutta.png" alt="Alt text" title="Optional title">
