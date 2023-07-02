@@ -7,6 +7,7 @@ export const Word = ( {value, onFormChange, onFormSubmit, data} ) => {
         onFormChange(value);
     }
     const handleSubmit = () => {
+        onFormChange(value);
         let flag = false
         data.map(contact => {
             if (contact.word === value) {
@@ -19,5 +20,5 @@ export const Word = ( {value, onFormChange, onFormSubmit, data} ) => {
         }
         
     }
-    return <span onMouseOver={handleChange} onClick={handleSubmit} style={{padding:3, margin:1,backgroundColor: "lavender", border: '1px solid black',borderRadius: '5px'}}>{value}</span>
+    return <span  onClick={handleSubmit} style={{paddingLeft:1,paddingRight:1, margin:0,backgroundColor: "lavender", border: '0px solid black'}}>{value}</span>
 }

@@ -2,6 +2,7 @@ import { render } from '@testing-library/react';
 import axios from 'axios';
 import React, { Component }  from 'react';
 import './App.css';
+//import './wiki.css';
 import {ContactPage} from './Pages/ContactPage';
 //import {FileUpload} from './Components/FileUpload';
 require('dotenv').config()

@@ -5,11 +5,11 @@ export const Counter = ({ count, setCount, Loader, wordlist }) => {
     
     const add = () => {
         setCount(count+1)
-        Loader(wordlist[count+1]) //loads another line of words
+        //Loader(wordlist[count+1]) //loads another line of words
     }
     const sub = () => {
         setCount(count-1)
-        Loader(wordlist[count]) //loads a line of words in case they weren't loaded
+        //Loader(wordlist[count]) //loads a line of words in case they weren't loaded
     }
 
     return(
