@@ -9,19 +9,21 @@ import {Counter} from '../Components/Counter';
 
 export const ContactPage = () => {
     
+    const [inputText, setInputText] = useState("")
+    const [userText, setUserText] = useState("")
     const [count, setCount] = useState(0)
     const [data, setData] = useState([
         {
         name: "sample name",
         word: "sample definition"
     }])
-    const [searchPhrase, setSearchPhrase] = useState('')
+    const [searchPhrase, setSearchPhrase] = useState('Kaunis')
 
     const story = "Kaunis sää Eero ja neljä muutta: Tänään täällä Lapissa on hyvin kaunis ja aurinkoinen ilma. Taivaskin on pilvetön. Liisa: Kyllä, todellakin! Tämä kesä on ollut ihanan lämmin. Eero: Minulle tämä kesä on ollut liian lämmin, melkein yhtä lämmin kuin Välimeren ilmasto.     Liisa: Mutta onneksi tänään on viileämpää. Tänään on kaksikymmentä astetta lämmintä, eilen oli jopa kolmekymmentä astetta. Eero: Tiedätkö minkälainen sää on nyt Helsingissä?    Liisa: Joo, sääennusteen mukaan Helsingissä on rankkasade. Merellä oli jopa myrsky. Eero: Onko siellä yhtä lämmintä kuin Lapissa?    Liisa: Ei, paljon kylmempää. Vain neljätoista astetta lämmintä."
     const [ wordlist, setWordlist ] = useState([story.split(" "),["menemme","ruoanlaitossa","kokeet","ruoanlaitto","tauti","hiihto","ennen","matka","tunti"],["huomenna","eilen","neuvoa","hiihtaa"]])
     //the wordlist is used as default data, for when data from a file wasn't uploaded yet.
     //wordlist is updated with data from python server when getData succeeds
-    
+
     const getData=()=>{
         console.log("Loading data with getData");
         fetch('/data.json'
@@ -46,14 +48,14 @@ export const ContactPage = () => {
 
     useEffect(()=> {        //fetches definitions of words
         const check_if_loaded = (word,dane) => {
-            console.log("looking if", word, "was loaded")
-            console.log(dane.some(e => e.word === word))
-            console.log(dane);
+            //console.log("looking if", word, "was loaded")
+            //console.log(dane.some(e => e.word === word))
+            //console.log(dane);
             if ( dane.some(e => e.word === word)) {
-                console.log("loaded")
+            //  console.log("loaded")
             } else {
                              //loader takes each words and sends it to python scripts to find translation
-                    console.log("useEffect loading "+word);
+                    //console.log("useEffect loading "+word);
                         fetch('/data/create', {
                             method: 'POST',
                             body: JSON.stringify({
@@ -80,11 +82,11 @@ export const ContactPage = () => {
 
         fetch('/data').then(response => {
             if (response.ok){
-                console.log("Data that was received with useEffect,",response)
+                //console.log("Data that was received with useEffect,",response)
                 return response.json()
                 
             }
-        }).then(data => {console.log("setData", data); setData(data); wordlist[0].forEach(word => check_if_loaded(word, data) ? console.log("present") : console.log("absent") )})
+        }).then(data => {/*console.log("setData", data);*/ setData(data); wordlist[0].forEach(word => check_if_loaded(word, data) ? console.log("present") : console.log("absent") )})
             
         
         
@@ -116,7 +118,16 @@ export const ContactPage = () => {
         
     }
 
-    const deleteWord = (name) => {
+
+    const handleInputTextChange = (inputValue) => {
+        setInputText(inputValue)
+    }
+
+    const handleInputTextSubmit = () => {
+        setUserText(inputText)
+    }
+
+    const deleteWord = (name) => { //practically unusable at this point
         fetch('/data/delete', {
             method: 'POST',
             body: JSON.stringify({
